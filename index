@@ -148,8 +148,9 @@ var META={
  "Interferência":{i:"🕵️",d:"PF, Moro e blindagem",q:"Moro saiu do governo apontando proteção a familiares."}
 };
 var TOP=[22,16,23,21,26,28,5,10];
-var SITE=location.href.split("#")[0],ctx=null;
-function wa(t){return "https://wa.me/?text="+encodeURIComponent(t)}
+var SITE_URL=""; /* coloque aqui o endereço final do site, ex.: https://seudominio.com.br */
+var SITE=SITE_URL||(/^https?:/.test(location.href)?location.href.split("#")[0]:""),ctx=null;
+function wa(t){return "https://api.whatsapp.com/send?text="+encodeURIComponent(t)}
 function el(tag,cls,txt){var n=document.createElement(tag);if(cls)n.className=cls;if(txt!=null)n.textContent=txt;return n}
 function getList(k,key){
   if(k==="top")return TOP.map(function(i){return I[i]});
@@ -188,10 +189,17 @@ function open(x){
   var a=el("div","acts"),l=el("a","src","Ler a fonte");
   l.href=x.u;l.target="_blank";l.rel="noopener noreferrer";
   var sh=el("a","sh","Compartilhar no WhatsApp");
-  sh.href=wa("🔎 "+x.h+"\n("+x.s+")\n"+x.u+"\n\nMais fatos, com fontes: "+SITE);
+  var tx="🔎 *"+x.h+"*\n\n"+x.x+"\n\nFonte ("+x.s+"):\n"+x.u+(SITE?"\n\nMais fatos, com fontes: "+SITE:"");
+  sh.href=wa(tx);
   sh.target="_blank";sh.rel="noopener noreferrer";
   var c=el("button","src","Fechar");c.type="button";c.onclick=function(){dlg.close()};
-  a.appendChild(l);a.appendChild(sh);a.appendChild(c);d.appendChild(a);dlg.showModal();
+  var cp=el("button","src","Copiar resumo");cp.type="button";cp.onclick=function(){copy(tx,cp)};
+  a.appendChild(l);a.appendChild(sh);a.appendChild(cp);a.appendChild(c);d.appendChild(a);dlg.showModal();
+}
+function copy(t,b){
+  function ok(){b.textContent="Copiado!";setTimeout(function(){b.textContent="Copiar resumo"},1800)}
+  function fb(){var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");ok()}catch(e){}ta.remove()}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else fb();
 }
 var dlg=document.getElementById("dlg");
 dlg.addEventListener("click",function(e){if(e.target===dlg)dlg.close()});
@@ -206,7 +214,7 @@ var be=document.getElementById("byEra");
 ERAS.forEach(function(E,i){be.appendChild(tile("🗓️",E.n,E.s,getList("era",i).length,function(){go("era",i)}))});
 document.getElementById("goTop").onclick=function(){go("top",0)};
 document.getElementById("back").onclick=function(){show(true)};
-var msg="Flávio Bolsonaro é investigado pela PF no Caso Master. Veja os fatos, com links para as fontes: "+SITE;
+var msg="Flávio Bolsonaro é investigado pela PF no Caso Master. Veja os fatos, com links para as fontes."+(SITE?" "+SITE:"");
 ["shareSite","shareSite2"].forEach(function(id){document.getElementById(id).href=wa(msg)});
 </script>
 </body>
